@@ -1,35 +1,35 @@
-# Stage 1: Build the app using Maven (Tối ưu hóa và sử dụng tag tồn tại)
-# Sử dụng Maven và JDK 11 (Tương thích tốt nhất với Tomcat 9.0/Java EE)
-FROM maven:3.9-openjdk-11 AS builder
+# Stage 1: Build the app using Maven (this creates the WAR file)
+FROM maven:3.8.1-openjdk-17-slim AS builder
 
-# Set the working directory
+# Set the working directory inside the container for the build
 WORKDIR /app
 
-# 1. Tận dụng Docker Cache: Copy pom.xml trước và tải dependencies
-COPY pom.xml .
-RUN mvn dependency:go-offline
+# Copy all your project files (pom.xml, src, etc.) into the container
+COPY . .
 
-# 2. Copy mã nguồn và Build
-COPY src ./src
-# Lệnh này sẽ tạo ra tệp /app/target/EmailListApp.war
+# Run Maven to clean and build the WAR file (skip tests to speed up)
 RUN mvn clean package -DskipTests
 
-# --------------------------------------------------------------------------------
+# Stage 2: Runtime environment with Tomcat (smaller image, no build tools)
+FROM tomcat:9.0-jdk17-corretto
 
-# Stage 2: Runtime environment with Tomcat 9.0
-# Sử dụng Tomcat 9.0 với JDK 11
-#FROM tomcat:9.0-jdk11-temurin
-FROM tomcat:10.1-jdk21-temurin
+# Add labels for metadata (optional, good practice)
+LABEL maintainer="your-email@example.com" \
+      version="1.0" \
+      description="EmailListWebApp on Tomcat"
 
-# Remove Tomcat's default webapps để tránh xung đột
+# Remove Tomcat's default webapps to avoid conflicts
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Copy the built WAR file từ Stage 1
-# Tệp .war được tìm thấy ở /app/target/EmailListApp.war
-COPY --from=builder /app/target/EmailListApp.war /usr/local/tomcat/webapps/ROOT.war
+# Copy the built WAR file from Stage 1 into Tomcat's webapps folder
+COPY --from=builder /app/target/EmailListWebApp.war /usr/local/tomcat/webapps/ROOT.war
 
-# Expose port 8080
+# Expose port 8080 (Tomcat's default port for HTTP)
 EXPOSE 8080
 
-# Command to start Tomcat
+# Healthcheck to verify the app is running (optional, helps Render detect readiness)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:8080/ || exit 1
+
+# Command to start Tomcat when the container runs
 CMD ["catalina.sh", "run"]
