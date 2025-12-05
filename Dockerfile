@@ -1,40 +1,27 @@
-# Giai đoạn 1: Xây dựng (Build Stage)
-# Sử dụng base image Maven với JDK 21 (tương thích tốt nhất hiện nay)
-FROM maven:3.9.6-jdk-21 AS build
+# Stage 1: Build the app using Maven (this creates the WAR file)
+FROM maven:3.8.1-openjdk-17-slim AS builder
 
-# Đặt thư mục làm việc
+# Set the working directory inside the container for the build
 WORKDIR /app
 
-# Sao chép và tải dependencies (để tận dụng caching)
-COPY pom.xml .
-RUN mvn dependency:go-offline
+# Copy all your project files (pom.xml, src, etc.) into the container
+COPY . .
 
-# Sao chép mã nguồn và đóng gói
-COPY src ./src
-RUN mvn package -DskipTests
+# Run Maven to clean and build the WAR file (skip tests to speed up)
+RUN mvn clean package -DskipTests
 
-# --------------------------------------------------------------------------------
+# Stage 2: Runtime environment with Tomcat (smaller image, no build tools)
+FROM tomcat:9.0-jdk17-corretto
 
-# Giai đoạn 2: Triển khai (Runtime Stage)
-# Sử dụng base image Tomcat 10.1 với JDK 21
-FROM tomcat:10.1-jdk21-temurin
+# Remove Tomcat's default webapps to avoid conflicts
+RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Thiết lập biến môi trường
-ENV CATALINA_HOME /usr/local/tomcat
+# Copy the built WAR file from Stage 1 into Tomcat's webapps folder
+# Adjust the WAR name if your pom.xml uses a different artifactId/version
+COPY --from=builder /app/target/EmailListApp.war /usr/local/tomcat/webapps/ROOT.war
 
-# Xóa các ứng dụng mặc định của Tomcat
-RUN rm -rf $CATALINA_HOME/webapps/ROOT \
-    $CATALINA_HOME/webapps/docs \
-    $CATALINA_HOME/webapps/examples \
-    $CATALINA_HOME/webapps/host-manager \
-    $CATALINA_HOME/webapps/manager
-
-# Sao chép tệp .war đã được xây dựng từ Build Stage sang thư mục webapps của Tomcat.
-# Đặt tên là ROOT.war để chạy ứng dụng ở context path gốc (/)
-COPY --from=build /app/target/EmailListApp.war $CATALINA_HOME/webapps/ROOT.war
-
-# Port mặc định mà Tomcat lắng nghe là 8080 (Render sẽ cần biết cổng này)
+# Expose port 8080 (Tomcat's default port for HTTP)
 EXPOSE 8080
-
-# Lệnh KHỞI ĐỘNG CHÍNH (Render sẽ tự động chạy lệnh này nếu ô Start Command bị bỏ trống)
+#
+# Command to start Tomcat when the container runs
 CMD ["catalina.sh", "run"]
