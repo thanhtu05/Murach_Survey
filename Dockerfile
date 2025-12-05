@@ -18,7 +18,8 @@ RUN mvn clean package -DskipTests
 
 # Stage 2: Runtime environment with Tomcat 9.0
 # Sử dụng Tomcat 9.0 với JDK 11
-FROM tomcat:9.0-jdk11-temurin
+#FROM tomcat:9.0-jdk11-temurin
+FROM tomcat:10.1-jdk21-temurin
 
 # Remove Tomcat's default webapps để tránh xung đột
 RUN rm -rf /usr/local/tomcat/webapps/*
