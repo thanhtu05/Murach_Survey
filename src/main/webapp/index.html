@@ -6,23 +6,71 @@
     <link rel="stylesheet" href="styles/main.css" type="text/css"/>
 </head>
 <body>
-<h1>Join our email list</h1>
-<p>To join our email list, enter your name and
-    email address below.</p>
+<img src="images/murach.jpg" alt="Murach Books Logo" width="200" height="200"/>
+<h1>Survey</h1>
+<p>If you have a moment, we'd appreciate it if you would fill out this survey</p>
+
 <form action="emailList" method="post">
     <input type="hidden" name="action" value="add">
 
-    <label>Email:</label>
-    <input type="email" name="email" required><br>
+    <h2>Your information</h2>
+    <div class="form-section">
+        <div class="form-group">
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="firstName" required>
+        </div>
+        <div class="form-group">
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="lastName" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="dob">Date Of Birth:</label>
+            <input type="text" id="dob" name="dob" required>
+        </div>
+    </div>
 
-    <label>First Name:</label>
-    <input type="text" name="firstName" required><br>
+    <h2>How did you hear about us?</h2>
+    <div class="radio-group">
+        <input type="radio" id="search" name="source" value="Search engine" checked>
+        <label for="search">Search engine</label>
 
-    <label>Last Name:</label>
-    <input type="text" name="lastName" required><br>
+        <input type="radio" id="wordofmouth" name="source" value="Word of mouth">
+        <label for="wordofmouth">Word of mouth</label>
 
-    <label>&nbsp;</label>
-    <input type="submit" value="Join Now" id="submit">
+        <input type="radio" id="socialmedia" name="source" value="Social Media">
+        <label for="socialmedia">Social Media</label>
+
+        <input type="radio" id="other" name="source" value="Other">
+        <label for="other">Other</label>
+    </div>
+
+    <h2>Would you like to receive announcements about new CDs and special offers?</h2>
+    <div class="checkbox-group">
+        <input type="checkbox" id="yes_cd" name="receiveCDs" value="Yes">
+        <label for="yes_cd">YES, I'd like that.</label>
+    </div>
+    <div class="checkbox-group">
+        <input type="checkbox" id="yes_email" name="receiveEmail" value="Yes">
+        <label for="yes_email">YES, please send me email announcements.</label>
+    </div>
+
+    <p>Please contact me by:
+        <select name="contact_method" id="contact_method">
+            <option value="Email or postal mail">Email or postal mail</option>
+            <option value="Email only">Email only</option>
+            <option value="Postal mail only">Postal mail only</option>
+            <option value="Do not contact">Do not contact</option>
+        </select>
+    </p>
+
+    <div class="submit-container">
+        <input type="submit" value="Submit" id="submit">
+    </div>
+
 </form>
 </body>
 </html>

@@ -1,24 +1,68 @@
+/* Thiết lập font và margin cơ bản cho toàn trang */
 body {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 11pt;
     margin-left: 2em;
     margin-right: 2em;
 }
+
+/* Tiêu đề chính */
 h1 {
     color: teal;
 }
-label {
-    float: left;
-    width: 6em;
-    margin-bottom: 0.5em;
+
+/* ------------------------------------------------------------------ */
+/* ĐỊNH DẠNG TRANG KẾT QUẢ (THANKS PAGE) */
+/* ------------------------------------------------------------------ */
+
+/* 1. Định dạng chung cho các vùng thông tin (Your Information, Survey Details) */
+.user-info, .survey-details {
+    /* Sử dụng Flexbox để tạo bố cục hai cột cho mỗi hàng thông tin */
+    display: flex;
+    flex-direction: column; /* Sắp xếp các cặp label/span theo chiều dọc */
+    margin-bottom: 1.5em;
+    padding: 10px;
+    border: 1px solid #ccc; /* Thêm đường viền để dễ phân biệt */
+    border-radius: 5px;
 }
-input[type="text"], input[type="email"] {
-    width: 15em;
-    margin-left: 0.5em;
-    margin-bottom: 0.5em;
+
+/* 2. Định dạng cho từng hàng (cặp Label/Span) */
+.user-info label, .survey-details label {
+    /* Label nằm ở cột bên trái */
+    display: inline-block;
+    width: 12em; /* Chiều rộng cố định lớn hơn để chứa các nhãn dài */
+    font-weight: bold;
+    margin-right: 1em; /* Khoảng cách giữa label và giá trị */
+    float: none; /* Bỏ float cũ nếu có */
+    text-align: left; /* Căn lề trái */
+    margin-bottom: 0.5em; /* Khoảng cách giữa các dòng */
 }
-br {
-    clear: both;
+
+/* 3. Định dạng cho giá trị (Span) */
+.user-info span, .survey-details span {
+    /* Giá trị nằm ở cột bên phải */
+    display: inline-block;
+    color: #4CAF50; /* Màu xanh lá để làm nổi bật giá trị */
+    font-weight: normal;
 }
-#submit {
-    margin-left: 0.5em; }
+
+/* 4. Định dạng từng cặp Label-Span để chúng nằm trên cùng một hàng */
+.user-info div, .survey-details div {
+    display: flex;
+    margin-bottom: 0.2em;
+}
+
+/* 5. Căn chỉnh nút Return (Submit button) */
+form input[type="submit"] {
+    margin-top: 1em;
+    padding: 8px 15px;
+    background-color: #407d9c; /* Màu xanh dương nhạt */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+form input[type="submit"]:hover {
+    background-color: #306580;
+}

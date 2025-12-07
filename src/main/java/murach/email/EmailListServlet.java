@@ -30,11 +30,21 @@ public class EmailListServlet extends HttpServlet  {
             String firstName = request.getParameter("firstName");
             String lastName = request.getParameter("lastName");
             String email = request.getParameter("email");
+            String dob = request.getParameter("dob");
+            String source = request.getParameter("source");
+            String receiveCDs = request.getParameter("receiveCDs"); // Checkbox: có thể là null
+            String receiveEmail = request.getParameter("receiveEmail"); // Checkbox: có thể là null
+            String contactMethod = request.getParameter("contact_method");
 
             // store data in User object and save User object in db
-            User user = new User(firstName, lastName, email);
+            User user = new User(firstName, lastName, email); // Dùng constructor cũ (chỉ 3 tham số)
+            user.setDob(dob);
+            user.setSource(source);
+            user.setReceiveCDs(receiveCDs); // Lớp User sẽ xử lý null thành "No"
+            user.setReceiveEmail(receiveEmail);
+            user.setContactMethod(contactMethod);
 //            UserDB.insert(user);
-
+//
             // set User object in request object and set URL
             request.setAttribute("user", user);
             url = "/thanks.jsp";   // the "thanks" page
